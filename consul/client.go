@@ -505,7 +505,7 @@ func (c *ConsulAlertClient) CheckStatus(node, serviceId, checkId string) (status
 }
 
 // GetProfileInfo returns profile info for check
-func (c *ConsulAlertClient) GetProfileInfo(node, serviceID, checkID string) (notifiersList map[string]bool, interval int) {
+func (c *ConsulAlertClient) GetProfileInfo(node, serviceID, checkID string) (checkProfile ProfileInfo) {
 	log.Println("Getting profile for node: ", node, " service: ", serviceID, " check: ", checkID)
 
 	var profile string
@@ -531,13 +531,11 @@ func (c *ConsulAlertClient) GetProfileInfo(node, serviceID, checkID string) (not
 		log.Println("profile key not found.")
 		return
 	}
-	var checkProfile ProfileInfo
+
 	json.Unmarshal(kvPair.Value, &checkProfile)
 
-	notifiersList = checkProfile.NotifList
-	interval = checkProfile.Interval
-	log.Println("Interval: ", interval, " List: ", notifiersList)
-	return
+	log.Println("Interval: ", checkProfile.Interval, " List: ", checkProfile.NotifList)
+	return checkProfile
 }
 
 // IsBlacklisted gets the blacklist status of check
